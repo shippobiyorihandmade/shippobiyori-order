@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ハーネスオーダー｜しっぽ日和</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f2;
+    --brown-light: #e8ddd0;
+    --brown-mid: #c4a882;
+    --brown-dark: #8b6f4e;
+    --brown-deep: #5c4530;
+    --green-sage: #8a9e7e;
+    --green-light: #dde8d6;
+    --text-main: #3d2e1e;
+    --text-sub: #7a5c3e;
+    --text-hint: #b09070;
+    --border: #ddd0be;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--text-main);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  .page-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 10% 20%, rgba(196,168,130,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(138,158,126,0.10) 0%, transparent 50%);
+  }
+
+  header {
+    background: var(--warm-white);
+    border-bottom: 1.5px solid var(--brown-light);
+    padding: 28px 24px 22px;
+    text-align: center;
+    position: relative; z-index: 1;
+  }
+
+  .logo-mark {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .logo-paw {
+    width: 32px; height: 32px;
+  }
+
+  h1 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--brown-deep);
+    letter-spacing: 0.08em;
+  }
+
+  .header-sub {
+    font-size: 12px; color: var(--text-hint);
+    margin-top: 4px; letter-spacing: 0.05em;
+  }
+
+  .container {
+    max-width: 680px; margin: 0 auto;
+    padding: 32px 20px 0;
+    position: relative; z-index: 1;
+  }
+
+  .notice-box {
+    background: var(--green-light);
+    border: 1px solid var(--green-sage);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #4a6040;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .notice-box strong { font-weight: 700; }
+
+  .step-indicator {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; margin-bottom: 32px;
+  }
+
+  .step {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    background: var(--brown-light); color: var(--text-hint);
+    transition: all 0.3s ease;
+  }
+
+  .step.active .step-circle {
+    background: var(--brown-dark); color: #fff;
+  }
+
+  .step.done .step-circle {
+    background: var(--green-sage); color: #fff;
+  }
+
+  .step-label {
+    font-size: 11px; color: var(--text-hint);
+    white-space: nowrap;
+  }
+
+  .step.active .step-label { color: var(--brown-dark); font-weight: 700; }
+  .step.done .step-label { color: var(--green-sage); }
+
+  .step-line {
+    width: 48px; height: 2px;
+    background: var(--brown-light);
+    margin-bottom: 18px;
+    transition: background 0.3s;
+  }
+
+  .step-line.done { background: var(--green-sage); }
+
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px; font-weight: 600;
+    color: var(--brown-deep);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--brown-light);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .card-title-icon {
+    width: 20px; height: 20px;
+    background: var(--brown-mid);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .field-group { margin-bottom: 20px; }
+
+  label {
+    display: block;
+    font-size: 13px; font-weight: 700;
+    color: var(--text-sub);
+    margin-bottom: 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .required {
+    display: inline-block;
+    background: #e07050;
+    color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 5px; border-radius: 3px;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  .optional {
+    display: inline-block;
+    background: var(--brown-light);
+    color: var(--text-hint);
+    font-size: 10px;
+    padding: 1px 5px; border-radius: 3px;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  input[type="text"], input[type="tel"], input[type="email"], textarea, select {
+    width: 100%;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--brown-mid);
+    box-shadow: 0 0 0 3px rgba(196,168,130,0.2);
+  }
+
+  input.error, textarea.error, select.error {
+    border-color: #e07050;
+  }
+
+  .error-msg {
+    font-size: 12px; color: #c0402a;
+    margin-top: 5px; display: none;
+  }
+
+  .error-msg.show { display: block; }
+
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .radio-group, .checkbox-group {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+
+  .radio-label, .checkbox-label {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    padding: 8px 16px;
+    font-size: 14px; cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .radio-label:hover, .checkbox-label:hover {
+    border-color: var(--brown-mid);
+  }
+
+  .radio-label input, .checkbox-label input { display: none; }
+
+  .radio-label.selected, .checkbox-label.selected {
+    background: var(--brown-mid);
+    border-color: var(--brown-dark);
+    color: #fff;
+  }
+
+  .hint {
+    font-size: 12px; color: var(--text-hint);
+    margin-top: 5px; line-height: 1.6;
+  }
+
+  .field-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  .field-row .field-group { margin-bottom: 0; }
+
+  /* 採寸イラスト */
+  .sizing-illustration {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .sizing-illustration p {
+    font-size: 12px; color: var(--text-sub);
+    margin-top: 12px; line-height: 1.6;
+  }
+
+  .sizing-toggle {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+
+  .sizing-option {
+    flex: 1;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+
+  .sizing-option.selected {
+    background: var(--brown-mid);
+    border-color: var(--brown-dark);
+    color: #fff;
+  }
+
+  .sizing-option .opt-title { font-weight: 700; font-size: 14px; }
+  .sizing-option .opt-sub { font-size: 11px; margin-top: 3px; opacity: 0.8; }
+
+  .size-fields { display: none; }
+  .size-fields.show { display: block; }
+
+  .visiting-note {
+    background: rgba(138,158,126,0.12);
+    border: 1px solid var(--green-sage);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 13px; color: #4a6040;
+    margin-top: 12px; display: none;
+    line-height: 1.7;
+  }
+
+  .visiting-note.show { display: block; }
+
+  /* 確認画面 */
+  .confirm-section { margin-bottom: 20px; }
+
+  .confirm-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--text-hint);
+    margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .confirm-row {
+    display: flex; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--brown-light);
+    font-size: 14px;
+  }
+
+  .confirm-row:last-child { border-bottom: none; }
+
+  .confirm-key {
+    min-width: 120px; color: var(--text-sub); font-size: 13px;
+  }
+
+  .confirm-val { color: var(--text-main); flex: 1; }
+
+  /* サンクス画面 */
+  .thanks-wrap {
+    text-align: center; padding: 40px 20px;
+  }
+
+  .thanks-icon {
+    width: 80px; height: 80px; margin: 0 auto 20px;
+  }
+
+  .thanks-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 22px; color: var(--brown-deep);
+    margin-bottom: 10px;
+  }
+
+  .thanks-sub {
+    font-size: 14px; color: var(--text-sub);
+    line-height: 1.8; margin-bottom: 28px;
+  }
+
+  .receipt-box {
+    background: var(--cream);
+    border: 2px dashed var(--brown-mid);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 0 auto 24px;
+    max-width: 320px;
+  }
+
+  .receipt-label {
+    font-size: 12px; color: var(--text-hint);
+    margin-bottom: 6px;
+  }
+
+  .receipt-number {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 32px; font-weight: 600;
+    color: var(--brown-deep);
+    letter-spacing: 0.1em;
+  }
+
+  .receipt-date {
+    font-size: 12px; color: var(--text-hint);
+    margin-top: 6px;
+  }
+
+  .screenshot-hint {
+    font-size: 13px; color: var(--green-sage);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* ボタン */
+  .btn-row {
+    display: flex; gap: 12px; margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    flex: 1; min-width: 120px;
+    padding: 15px 20px;
+    border: none; border-radius: 32px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+
+  .btn-primary {
+    background: var(--brown-dark);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: var(--brown-deep);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: var(--brown-light);
+    color: var(--brown-deep);
+  }
+
+  .btn-secondary:hover {
+    background: var(--brown-mid);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.5; cursor: not-allowed; transform: none;
+  }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b09070' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  .field-inline {
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .field-inline input {
+    flex: 1;
+  }
+
+  .field-unit {
+    font-size: 14px; color: var(--text-hint); white-space: nowrap;
+  }
+
+  .contact-notice {
+    margin-top: 8px;
+    background: var(--green-light);
+    border: 1px solid var(--green-sage);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #4a6040;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-bg"></div>
+
+<header>
+  <div class="logo-mark">
+    <svg class="logo-paw" viewBox="0 0 32 32" fill="none">
+      <ellipse cx="16" cy="20" rx="9" ry="7" fill="#c4a882"/>
+      <ellipse cx="9" cy="13" rx="3.5" ry="2.5" fill="#c4a882"/>
+      <ellipse cx="23" cy="13" rx="3.5" ry="2.5" fill="#c4a882"/>
+      <ellipse cx="13" cy="11" rx="2.5" ry="2" fill="#c4a882"/>
+      <ellipse cx="19" cy="11" rx="2.5" ry="2" fill="#c4a882"/>
+    </svg>
+    <h1>しっぽ日和</h1>
+  </div>
+  <div class="header-sub">ハンドメイドハーネス　オーダーフォーム</div>
+</header>
+
+<div class="container">
+
+  <div class="notice-box">
+    <strong>このフォームについて</strong><br>
+    オーダーのご意思とご要望をお知らせいただくためのフォームです。送信後、作家より直接ご連絡を差し上げ、詳しい打ち合わせをさせていただきます。
+  </div>
+
+  <div class="step-indicator">
+    <div class="step active" id="step1">
+      <div class="step-circle">1</div>
+      <div class="step-label">入力</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-label">確認</div>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-label">完了</div>
+    </div>
+  </div>
+
+  <!-- PAGE 1: 入力 -->
+  <div class="page active" id="page-input">
+
+    <!-- お客様情報 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-icon">1</span>
+        お客様情報
+      </div>
+
+      <div class="field-group">
+        <label>お名前<span class="required">必須</span></label>
+        <input type="text" id="name" placeholder="例：山田 花子" autocomplete="name">
+        <div class="error-msg" id="err-name">お名前を入力してください</div>
+      </div>
+
+      <div class="field-group">
+        <label>ご連絡先<span class="required">必須</span></label>
+        <div class="radio-group" id="contact-type-group" style="margin-bottom:10px">
+          <label class="radio-label" onclick="selectRadio('contact-type','email',this)">
+            <input type="radio" name="contact-type" value="email"> メール
+          </label>
+          <label class="radio-label" onclick="selectRadio('contact-type','tel',this)">
+            <input type="radio" name="contact-type" value="tel"> 電話
+          </label>
+        </div>
+        <div id="contact-email-wrap">
+          <input type="email" id="contact-email" placeholder="例：hanako@example.com" autocomplete="email">
+          <div class="error-msg" id="err-contact">連絡先を入力してください</div>
+          <div class="contact-notice" id="notice-email" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <strong>shippobiyori.handmade@gmail.com</strong> よりご連絡いたします。迷惑メールフォルダもご確認ください。
+          </div>
+        </div>
+        <div id="contact-tel-wrap" style="display:none">
+          <input type="tel" id="contact-tel" placeholder="例：090-1234-5678" autocomplete="tel">
+          <div class="contact-notice" id="notice-tel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l.91-1.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16.5"/></svg>
+            作家の<strong>携帯電話</strong>よりご連絡いたします。知らない番号からの着信もお出いただけると幸いです。
+          </div>
+        </div>
+        <div class="hint">ご希望の連絡方法を選んでください</div>
+      </div>
+
+      <div class="field-group">
+        <label>どこでしっぽ日和を知りましたか？<span class="required">必須</span></label>
+        <div class="radio-group" id="via-group">
+          <label class="radio-label" onclick="selectRadio('via','saari',this)">
+            <input type="radio" name="via" value="saari"> Saari Cafe
+          </label>
+          <label class="radio-label" onclick="selectRadio('via','instagram',this)">
+            <input type="radio" name="via" value="instagram"> Instagram
+          </label>
+          <label class="radio-label" onclick="selectRadio('via','threads',this)">
+            <input type="radio" name="via" value="threads"> Threads
+          </label>
+        </div>
+        <div class="error-msg" id="err-via">選択してください</div>
+        <div class="hint" id="via-hint" style="min-height:1.4em"></div>
+        <div id="sns-account-wrap" style="display:none; margin-top:12px">
+          <label style="margin-bottom:6px">SNSアカウント名<span class="optional">任意</span></label>
+          <input type="text" id="sns-account" placeholder="例：@shippobiyori　※DMでのやりとりにも使います">
+          <div class="hint">メール・電話に加えて、DMでのご連絡も可能です</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- わんちゃん情報 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-icon">2</span>
+        わんちゃんの情報
+      </div>
+
+      <div class="field-group">
+        <label>わんちゃんのお名前<span class="optional">任意</span></label>
+        <input type="text" id="dog-name" placeholder="例：ぽち">
+      </div>
+
+      <div class="field-group">
+        <label>犬種<span class="required">必須</span></label>
+        <input type="text" id="dog-breed" placeholder="例：柴犬、トイプードル、ミックスなど">
+        <div class="error-msg" id="err-breed">犬種を入力してください</div>
+      </div>
+
+      <div class="field-group">
+        <label>サイズの計測について<span class="required">必須</span></label>
+        <div class="sizing-toggle">
+          <div class="sizing-option" id="opt-self" onclick="selectSizing('self')">
+            <div class="opt-title">自分で計測する</div>
+            <div class="opt-sub">下の図を参考に入力</div>
+          </div>
+          <div class="sizing-option" id="opt-request" onclick="selectSizing('request')">
+            <div class="opt-title">採寸をお願いしたい</div>
+            <div class="opt-sub">出張採寸（淡路島内）</div>
+          </div>
+        </div>
+        <div class="error-msg" id="err-sizing">選択してください</div>
+
+        <!-- 自分で計測 -->
+        <div class="size-fields" id="size-fields-self">
+          <div class="sizing-illustration">
+            <img src="sizing-guide.png" alt="採寸ガイド（首回り・胴回り・着丈）" style="width:100%; max-width:400px; display:block; margin:0 auto;">
+            <p>首の付け根・みぞおち（一番細い部分）・背中の長さを<br>メジャーで測ってご入力ください</p>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>首回り</label>
+              <div class="field-inline">
+                <input type="text" id="size-neck" placeholder="例：30" inputmode="decimal">
+                <span class="field-unit">cm</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label>胴回り</label>
+              <div class="field-inline">
+                <input type="text" id="size-chest" placeholder="例：45" inputmode="decimal">
+                <span class="field-unit">cm</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label>着丈</label>
+              <div class="field-inline">
+                <input type="text" id="size-back" placeholder="例：28" inputmode="decimal">
+                <span class="field-unit">cm</span>
+              </div>
+            </div>
+          </div>
+          <div class="hint">わからない箇所は空欄でもOKです。打ち合わせ時に確認します。</div>
+        </div>
+
+        <!-- 採寸依頼 -->
+        <div class="size-fields" id="size-fields-request">
+          <div class="visiting-note show">
+            📍 淡路島内のご自宅へお伺いします（店舗での採寸は行っておりません）。<br>
+            送信後、日程調整のご連絡をさせていただきます。<br><br>
+            <strong>出張採寸料：500円</strong>（南あわじ市の場合は1,000円）<br>
+            ※淡路市・洲本市：500円　／　南あわじ市：1,000円<br>
+            ※オーダー成約の場合は無料です<br>
+            ※採寸のみでキャンセルの場合は採寸料を頂戴します<br>
+            ※作家側の都合でご採寸できなかった場合は無料です
+          </div>
+          <div class="field-group" style="margin-top:14px">
+            <label>ご住所<span class="required">必須</span></label>
+            <input type="text" id="visit-address" placeholder="例：兵庫県淡路市〇〇 1-2-3" autocomplete="street-address">
+            <div class="error-msg" id="err-address">住所を入力してください</div>
+            <div class="hint">出張採寸の際にお伺いする住所をご入力ください</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- デザイン希望 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-icon">3</span>
+        デザイン・ご要望
+      </div>
+
+      <div class="field-group">
+        <label>希望の色<span class="optional">任意</span></label>
+        <input type="text" id="color-pref" placeholder="例：ブラウン系、ネイビー、白っぽい色など">
+      </div>
+
+      <div class="field-group">
+        <label>デザインのご希望<span class="optional">任意</span></label>
+        <textarea id="design-pref" placeholder="例：シンプルなもの、チェック柄、名前を入れたい、参考にしたいデザインがある　など&#10;&#10;なんでもお気軽にどうぞ！"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label>その他・ご質問<span class="optional">任意</span></label>
+        <textarea id="other-note" placeholder="ご不明な点やご要望があればお気軽にどうぞ"></textarea>
+      </div>
+    </div>
+
+    <!-- 受け渡し -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-icon">4</span>
+        お受け渡しについて
+      </div>
+      <div id="delivery-info" style="font-size:13px; color:var(--text-sub); line-height:1.8; background:var(--cream); border-radius:var(--radius-sm); padding:14px 16px;">
+        上の「どこでしっぽ日和を知りましたか？」を選択すると、受け渡し場所が表示されます。
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goConfirm()">内容を確認する →</button>
+    </div>
+
+  </div><!-- /page-input -->
+
+  <!-- PAGE 2: 確認 -->
+  <div class="page" id="page-confirm">
+
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-icon">✓</span>
+        入力内容のご確認
+      </div>
+      <div id="confirm-content"></div>
+    </div>
+
+    <div style="font-size:13px; color:var(--text-sub); line-height:1.8; margin-bottom:8px; padding: 0 4px;">
+      上記の内容でよろしければ「送信する」を押してください。<br>
+      修正する場合は「戻る」を押してください。
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goBack()">← 戻る</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">送信する</button>
+    </div>
+  </div><!-- /page-confirm -->
+
+  <!-- PAGE 3: サンクス -->
+  <div class="page" id="page-thanks">
+    <div class="card">
+      <div class="thanks-wrap">
+        <svg class="thanks-icon" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="38" fill="#dde8d6" stroke="#8a9e7e" stroke-width="1.5"/>
+          <!-- 肉球ハート -->
+          <path d="M40 52 Q28 42 28 34 A8 8 0 0 1 40 30 A8 8 0 0 1 52 34 Q52 42 40 52Z" fill="#8a9e7e"/>
+          <ellipse cx="30" cy="27" rx="5" ry="4" fill="#8a9e7e"/>
+          <ellipse cx="50" cy="27" rx="5" ry="4" fill="#8a9e7e"/>
+        </svg>
+
+        <div class="thanks-title">オーダーを受け付けました！</div>
+        <div class="thanks-sub">
+          ご登録のご連絡先へ、作家より直接ご連絡いたします。<br>
+          少々お待ちください🐾
+        </div>
+
+        <div class="receipt-box">
+          <div class="receipt-label">受付番号</div>
+          <div class="receipt-number" id="receipt-number">-</div>
+          <div class="receipt-date" id="receipt-date"></div>
+        </div>
+
+        <div class="screenshot-hint">
+          📸 この画面をスクリーンショットして保存してください
+        </div>
+        <div style="font-size:12px; color:var(--text-hint);">
+          受付番号は作家からのご連絡時にお伝えする場合があります
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-thanks -->
+
+</div><!-- /container -->
+
+<script>
+  let formData = {};
+  let contactType = '';
+  let sizingType = '';
+  let viaType = '';
+
+  function selectRadio(name, value, el) {
+    document.querySelectorAll(`[onclick*="selectRadio('${name}'"]`).forEach(l => l.classList.remove('selected'));
+    el.classList.add('selected');
+    if (name === 'contact-type') {
+      contactType = value;
+      document.getElementById('contact-email-wrap').style.display = value === 'email' ? 'block' : 'none';
+      document.getElementById('contact-tel-wrap').style.display = value === 'tel' ? 'block' : 'none';
+      document.getElementById('notice-email').style.display = value === 'email' ? 'block' : 'none';
+    }
+    if (name === 'via') {
+      viaType = value;
+      document.getElementById('err-via').classList.remove('show');
+      const deliveryMap = {
+        saari: '<strong>Saari Cafe</strong> にてお受け渡し予定です。<br>詳細は打ち合わせ時にご確認させていただきます。',
+        instagram: 'お受け渡し場所は<strong>打ち合わせ時にご相談</strong>させていただきます。',
+        threads: 'お受け渡し場所は<strong>打ち合わせ時にご相談</strong>させていただきます。'
+      };
+      const hintMap = {
+        saari: '📍 Saari Cafe経由でお申し込みいただいた場合、店舗でのお受け渡しを予定しています',
+        instagram: '📱 Instagramからのオーダーありがとうございます！',
+        threads: '📱 Threadsからのオーダーありがとうございます！'
+      };
+      const snsLabelMap = {
+        instagram: 'Instagramアカウント名（任意）',
+        threads: 'Threadsアカウント名（任意）'
+      };
+      document.getElementById('delivery-info').innerHTML = deliveryMap[value] || '';
+      document.getElementById('via-hint').textContent = hintMap[value] || '';
+      const snsWrap = document.getElementById('sns-account-wrap');
+      const isSns = value === 'instagram' || value === 'threads';
+      snsWrap.style.display = isSns ? 'block' : 'none';
+      if (isSns) {
+        snsWrap.querySelector('label').innerHTML = snsLabelMap[value] + '<span class="optional" style="display:inline-block;background:var(--brown-light);color:var(--text-hint);font-size:10px;padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle;">任意</span>';
+        document.getElementById('sns-account').placeholder = value === 'instagram' ? '例：@しっぽ日和' : '例：@しっぽ日和';
+      }
+    }
+  }
+
+  function selectSizing(type) {
+    sizingType = type;
+    document.getElementById('opt-self').classList.toggle('selected', type === 'self');
+    document.getElementById('opt-request').classList.toggle('selected', type === 'request');
+    document.getElementById('size-fields-self').classList.toggle('show', type === 'self');
+    document.getElementById('size-fields-request').classList.toggle('show', type === 'request');
+    document.getElementById('err-sizing').classList.remove('show');
+  }
+
+  function validate() {
+    let ok = true;
+
+    const name = document.getElementById('name').value.trim();
+    document.getElementById('err-name').classList.toggle('show', !name);
+    document.getElementById('name').classList.toggle('error', !name);
+    if (!name) ok = false;
+
+    const breed = document.getElementById('dog-breed').value.trim();
+    document.getElementById('err-breed').classList.toggle('show', !breed);
+    document.getElementById('dog-breed').classList.toggle('error', !breed);
+    if (!breed) ok = false;
+
+    let contactVal = '';
+    if (!contactType) {
+      document.getElementById('err-contact').textContent = '連絡方法を選択してください';
+      document.getElementById('err-contact').classList.add('show');
+      ok = false;
+    } else {
+      const el = contactType === 'email'
+        ? document.getElementById('contact-email')
+        : document.getElementById('contact-tel');
+      contactVal = el.value.trim();
+      const hasContact = contactVal.length > 0;
+      document.getElementById('err-contact').textContent = '連絡先を入力してください';
+      document.getElementById('err-contact').classList.toggle('show', !hasContact);
+      el.classList.toggle('error', !hasContact);
+      if (!hasContact) ok = false;
+    }
+
+    if (!sizingType) {
+      document.getElementById('err-sizing').classList.add('show');
+      ok = false;
+    }
+
+    if (sizingType === 'request') {
+      const addr = document.getElementById('visit-address').value.trim();
+      document.getElementById('err-address').classList.toggle('show', !addr);
+      document.getElementById('visit-address').classList.toggle('error', !addr);
+      if (!addr) ok = false;
+    }
+
+    if (!viaType) {
+      document.getElementById('err-via').classList.add('show');
+      ok = false;
+    }
+
+    return ok;
+  }
+
+  function goConfirm() {
+    if (!validate()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const firstErr = document.querySelector('.error');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const contactVal = contactType === 'email'
+      ? document.getElementById('contact-email').value.trim()
+      : document.getElementById('contact-tel').value.trim();
+
+    formData = {
+      name: document.getElementById('name').value.trim(),
+      contactType: contactType === 'email' ? 'メール' : '電話',
+      contact: contactVal,
+      dogName: document.getElementById('dog-name').value.trim() || '（未記入）',
+      dogBreed: document.getElementById('dog-breed').value.trim(),
+      sizingType: sizingType === 'self' ? '自分で計測' : '出張採寸希望',
+      visitAddress: sizingType === 'request' ? document.getElementById('visit-address').value.trim() : '',
+      sizeNeck: document.getElementById('size-neck').value.trim() || '',
+      sizeChest: document.getElementById('size-chest').value.trim() || '',
+      sizeBack: document.getElementById('size-back').value.trim() || '',
+      colorPref: document.getElementById('color-pref').value.trim() || '（未記入）',
+      designPref: document.getElementById('design-pref').value.trim() || '（未記入）',
+      otherNote: document.getElementById('other-note').value.trim() || '（未記入）',
+      via: { saari: 'Saari Cafe', instagram: 'Instagram', threads: 'Threads' }[viaType] || viaType,
+      snsAccount: document.getElementById('sns-account').value.trim() || '',
+    };
+
+    let sizeStr = sizingType === 'request' ? '出張採寸をご依頼' :
+      [formData.sizeNeck ? `首回り ${formData.sizeNeck}cm` : '',
+       formData.sizeChest ? `胴回り ${formData.sizeChest}cm` : '',
+       formData.sizeBack ? `着丈 ${formData.sizeBack}cm` : '']
+      .filter(Boolean).join('　／　') || '（未記入）';
+
+    const rows = [
+      ['お名前', formData.name],
+      ['連絡方法', formData.contactType],
+      ['連絡先', formData.contact],
+      ['わんちゃんのお名前', formData.dogName],
+      ['犬種', formData.dogBreed],
+      ['サイズ', sizeStr],
+      ...(formData.visitAddress ? [['出張先住所', formData.visitAddress]] : []),
+      ['希望の色', formData.colorPref],
+      ['デザインのご希望', formData.designPref],
+      ['きっかけ', formData.via],
+      ...(formData.snsAccount ? [['SNSアカウント', formData.snsAccount]] : []),
+      ['その他・ご質問', formData.otherNote],
+    ];
+
+    const html = rows.map(([k, v]) =>
+      `<div class="confirm-row"><div class="confirm-key">${k}</div><div class="confirm-val">${v.replace(/\n/g, '<br>')}</div></div>`
+    ).join('');
+
+    document.getElementById('confirm-content').innerHTML = html;
+
+    setStep(2);
+    showPage('page-confirm');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBack() {
+    setStep(1);
+    showPage('page-input');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function submitForm() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>送信中...';
+
+    // ここにGoogle Apps ScriptのWebアプリURLを入れる
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxGezZlbmgnL-4kehu3-DO1XSZjX5gFebFrdQlnfixDZ7RCCP6mncm9G8ai-FWz6vRsLA/exec';
+
+    const receiptNum = 'SB' + Date.now().toString().slice(-6);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    const payload = { ...formData, receiptNumber: receiptNum, submittedAt: dateStr };
+
+    try {
+      if (GAS_URL !== 'YOUR_GAS_URL_HERE') {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+    } catch(e) {
+      console.log('送信エラー（テスト中）:', e);
+    }
+
+    document.getElementById('receipt-number').textContent = receiptNum;
+    document.getElementById('receipt-date').textContent = dateStr + ' 受付';
+
+    setStep(3);
+    showPage('page-thanks');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function setStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      const s = document.getElementById('step' + i);
+      s.classList.remove('active', 'done');
+      if (i < n) s.classList.add('done');
+      else if (i === n) s.classList.add('active');
+    }
+    for (let i = 1; i <= 2; i++) {
+      document.getElementById('line' + i).classList.toggle('done', i < n);
+    }
+  }
+</script>
+</body>
+</html>
