@@ -538,31 +538,38 @@
       </div>
 
       <div class="field-group">
-        <label>ご連絡先<span class="required">必須</span></label>
-        <div class="radio-group" id="contact-type-group" style="margin-bottom:10px">
+        <label>メールアドレス<span class="optional">任意</span></label>
+        <input type="email" id="contact-email" placeholder="例：hanako@example.com" autocomplete="email" oninput="checkBothContact()">
+        <div class="error-msg" id="err-email">メールアドレスまたは電話番号をどちらか入力してください</div>
+        <div class="contact-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <strong>shippobiyori.handmade@gmail.com</strong> よりご連絡いたします。迷惑メールフォルダもご確認ください。
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>電話番号<span class="optional">任意</span></label>
+        <input type="tel" id="contact-tel" placeholder="例：090-1234-5678" autocomplete="tel" oninput="checkBothContact()">
+        <div class="error-msg" id="err-tel">電話番号を入力してください</div>
+        <div class="contact-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l.91-1.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16.5"/></svg>
+          作家の<strong>携帯電話</strong>よりご連絡いたします。知らない番号からの着信もお出いただけると幸いです。
+        </div>
+        <div id="both-contact-notice" style="display:none; margin-top:8px; padding:10px 14px; background:var(--green-light); border:1px solid var(--green-sage); border-radius:var(--radius-sm); font-size:12px; color:#4a6040; line-height:1.7;"></div>
+      </div>
+
+      <div class="field-group">
+        <label>優先連絡方法<span class="required">必須</span></label>
+        <div class="radio-group" id="contact-type-group">
           <label class="radio-label" onclick="selectRadio('contact-type','email',this)">
-            <input type="radio" name="contact-type" value="email"> メール
+            <input type="radio" name="contact-type" value="email"> メール優先
           </label>
           <label class="radio-label" onclick="selectRadio('contact-type','tel',this)">
-            <input type="radio" name="contact-type" value="tel"> 電話
+            <input type="radio" name="contact-type" value="tel"> 電話優先
           </label>
         </div>
-        <div id="contact-email-wrap">
-          <input type="email" id="contact-email" placeholder="例：hanako@example.com" autocomplete="email">
-          <div class="error-msg" id="err-contact">連絡先を入力してください</div>
-          <div class="contact-notice" id="notice-email" style="display:none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            <strong>shippobiyori.handmade@gmail.com</strong> よりご連絡いたします。迷惑メールフォルダもご確認ください。
-          </div>
-        </div>
-        <div id="contact-tel-wrap" style="display:none">
-          <input type="tel" id="contact-tel" placeholder="例：090-1234-5678" autocomplete="tel">
-          <div class="contact-notice" id="notice-tel">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 1.99-2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l.91-1.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16.5"/></svg>
-            作家の<strong>携帯電話</strong>よりご連絡いたします。知らない番号からの着信もお出いただけると幸いです。
-          </div>
-        </div>
-        <div class="hint">ご希望の連絡方法を選んでください</div>
+        <div class="error-msg" id="err-contact">優先連絡方法を選択してください</div>
+        <div class="hint">どちらの方法でご連絡するか選んでください</div>
       </div>
 
       <div class="field-group">
@@ -783,9 +790,6 @@
     el.classList.add('selected');
     if (name === 'contact-type') {
       contactType = value;
-      document.getElementById('contact-email-wrap').style.display = value === 'email' ? 'block' : 'none';
-      document.getElementById('contact-tel-wrap').style.display = value === 'tel' ? 'block' : 'none';
-      document.getElementById('notice-email').style.display = value === 'email' ? 'block' : 'none';
     }
     if (name === 'via') {
       viaType = value;
@@ -816,6 +820,25 @@
     }
   }
 
+  // メール・電話の両方入力チェック（リアルタイム）
+  function checkBothContact() {
+    const email = document.getElementById('contact-email').value.trim();
+    const tel = document.getElementById('contact-tel').value.trim();
+    const notice = document.getElementById('both-contact-notice');
+    if (email && tel) {
+      notice.style.display = 'block';
+      notice.innerHTML = '✓ メール・電話番号の両方をご入力いただきました。入力誤りがあった際も安心です🐾';
+    } else if (email || tel) {
+      notice.style.display = 'block';
+      notice.innerHTML = 'もう一方もご入力いただくと、万が一の入力誤りの際も安心です。';
+      notice.style.background = 'var(--brown-light)';
+      notice.style.borderColor = 'var(--brown-mid)';
+      notice.style.color = 'var(--text-sub)';
+    } else {
+      notice.style.display = 'none';
+    }
+  }
+
   function selectSizing(type) {
     sizingType = type;
     document.getElementById('opt-self').classList.toggle('selected', type === 'self');
@@ -838,21 +861,17 @@
     document.getElementById('dog-breed').classList.toggle('error', !breed);
     if (!breed) ok = false;
 
-    let contactVal = '';
+    const emailVal = document.getElementById('contact-email').value.trim();
+    const telVal = document.getElementById('contact-tel').value.trim();
+    const hasAnyContact = emailVal.length > 0 || telVal.length > 0;
+    document.getElementById('err-email').classList.toggle('show', !hasAnyContact);
+    if (!hasAnyContact) ok = false;
+
     if (!contactType) {
-      document.getElementById('err-contact').textContent = '連絡方法を選択してください';
       document.getElementById('err-contact').classList.add('show');
       ok = false;
     } else {
-      const el = contactType === 'email'
-        ? document.getElementById('contact-email')
-        : document.getElementById('contact-tel');
-      contactVal = el.value.trim();
-      const hasContact = contactVal.length > 0;
-      document.getElementById('err-contact').textContent = '連絡先を入力してください';
-      document.getElementById('err-contact').classList.toggle('show', !hasContact);
-      el.classList.toggle('error', !hasContact);
-      if (!hasContact) ok = false;
+      document.getElementById('err-contact').classList.remove('show');
     }
 
     if (!sizingType) {
@@ -883,14 +902,11 @@
       return;
     }
 
-    const contactVal = contactType === 'email'
-      ? document.getElementById('contact-email').value.trim()
-      : document.getElementById('contact-tel').value.trim();
-
     formData = {
       name: document.getElementById('name').value.trim(),
-      contactType: contactType === 'email' ? 'メール' : '電話',
-      contact: contactVal,
+      contactType: contactType === 'email' ? 'メール優先' : '電話優先',
+      contactEmail: document.getElementById('contact-email').value.trim(),
+      contactTel: document.getElementById('contact-tel').value.trim(),
       dogName: document.getElementById('dog-name').value.trim() || '（未記入）',
       dogBreed: document.getElementById('dog-breed').value.trim(),
       sizingType: sizingType === 'self' ? '自分で計測' : '出張採寸希望',
@@ -913,8 +929,9 @@
 
     const rows = [
       ['お名前', formData.name],
-      ['連絡方法', formData.contactType],
-      ['連絡先', formData.contact],
+      ['優先連絡方法', formData.contactType],
+      ['メールアドレス', formData.contactEmail],
+      ['電話番号', formData.contactTel],
       ['わんちゃんのお名前', formData.dogName],
       ['犬種', formData.dogBreed],
       ['サイズ', sizeStr],
